@@ -34,7 +34,5 @@ Run with `.` to export `LD_LIBRARY_PATH` to your current shell envirnonment.
 
 ## Credits ##
 
-Development of this software prototype was supported by:
-
-    ERC Consolidator grant no. 649043 AI4REASON
+Development of this software prototype was supported by ERC Consolidator grant no. 649043 AI4REASON.
 
