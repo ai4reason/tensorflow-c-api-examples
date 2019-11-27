@@ -16,8 +16,10 @@ int main(int argc, char** argv)
    TF_Buffer* run = TF_NewBuffer();
    TF_Buffer* meta = TF_NewBuffer();
 
+   // default tags
    const char* tags[1] = {"serve"};
 
+   // load session
    TF_Session* tfs = TF_LoadSessionFromSavedModel(
       options, 
       run, // NULL, // const TF_Buffer* run_options,
@@ -34,6 +36,7 @@ int main(int argc, char** argv)
       printf("Error: Tensorflow: %s\n", TF_Message(status));
    }
 
+   // list operations
    size_t pos = 0;
    TF_Operation* oper;
    while ((oper = TF_GraphNextOperation(graph, &pos)) != NULL) 
@@ -41,6 +44,23 @@ int main(int argc, char** argv)
       printf("op: name=%s ins=%d outs=%d\n", TF_OperationName(oper),
             TF_OperationNumInputs(oper), TF_OperationNumOutputs(oper));
    }
+
+   // terminate
+   TF_CloseSession(tfs, status);
+   if (TF_GetCode(status) != TF_OK)
+   {
+      printf("Error: Tensorflow: %s\n", TF_Message(status));
+   }
+   TF_DeleteSession(tfs, status);
+   if (TF_GetCode(status) != TF_OK)
+   {
+      printf("Error: Tensorflow: %s\n", TF_Message(status));
+   }
+   TF_DeleteBuffer(meta);
+   TF_DeleteBuffer(run);
+   TF_DeleteSessionOptions(options);
+   TF_DeleteGraph(graph);
+   TF_DeleteStatus(status);
 
    return 0;
 }
