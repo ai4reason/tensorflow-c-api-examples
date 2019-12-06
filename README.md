@@ -2,11 +2,11 @@
 
 ## Get Libraries ##
 
-You need to download libraries (tested with version 1.14.0) from:
+You need to download libraries (tested with version 1.15.0) from:
 
    https://www.tensorflow.org/install/lang_c
 
-Put them in `lib` directory next to `includes`.  Update `includes` for different versions.
+Put them in `lib` directory next to `include`.  Update `include` for different versions.
 
 See their LICENSE for includes.
 
@@ -28,7 +28,7 @@ Check [examples/make.sh](examples/make.sh) to see how to compile:
 Run with `.` to export `LD_LIBRARY_PATH` to your current shell envirnonment.
 
    ```shell
-   $ . ./make
+   $ . ./make.sh
    $ ./tfc-model-eval models/example
    ```
 

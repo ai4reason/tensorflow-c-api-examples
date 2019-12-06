@@ -34,6 +34,7 @@ int main(int argc, char** argv)
    if (TF_GetCode(status) != TF_OK)
    {
       printf("Error: Tensorflow: %s\n", TF_Message(status));
+      return -1;
    }
 
    // list operations
@@ -41,8 +42,43 @@ int main(int argc, char** argv)
    TF_Operation* oper;
    while ((oper = TF_GraphNextOperation(graph, &pos)) != NULL) 
    {
-      printf("op: name=%s ins=%d outs=%d\n", TF_OperationName(oper),
-            TF_OperationNumInputs(oper), TF_OperationNumOutputs(oper));
+      TF_Output tensor;
+      const char* name = TF_OperationName(oper);
+      tensor.oper = TF_GraphOperationByName(graph, name);
+      tensor.index = 0;
+      int n_ins = TF_OperationNumInputs(oper);
+      int n_outs = TF_OperationNumOutputs(oper);
+      int n_dims = -1;
+      if (n_ins != 0 && n_outs !=0)
+      {
+         n_dims = TF_GraphGetTensorNumDims(graph, tensor, status);
+         if (TF_GetCode(status) != TF_OK)
+         {
+            printf("Error: Tensorflow: %s\n", TF_Message(status));
+            return -1;
+         }
+      }
+      printf("op: name=%s ins=%d outs=%d dims=%d", name, n_ins, n_outs, n_dims);
+      if (n_dims != -1)
+      {
+         int64_t dims[1024];
+         TF_GraphGetTensorShape(graph, tensor, dims, n_dims, status);
+         if (TF_GetCode(status) != TF_OK)
+         {
+            printf("Error: Tensorflow: %s\n", TF_Message(status));
+            return -1;
+         }
+         printf(" shape=[");
+         for (int i=0; i<n_dims; i++)
+         {
+            printf("%ld%s", dims[i], (i<n_dims-1) ? "," : "");
+         }
+         printf("]\n");
+      }
+      else
+      {
+         printf(" shape=?\n");
+      }
    }
 
    // terminate
@@ -50,11 +86,13 @@ int main(int argc, char** argv)
    if (TF_GetCode(status) != TF_OK)
    {
       printf("Error: Tensorflow: %s\n", TF_Message(status));
+      return -1;
    }
    TF_DeleteSession(tfs, status);
    if (TF_GetCode(status) != TF_OK)
    {
       printf("Error: Tensorflow: %s\n", TF_Message(status));
+      return -1;
    }
    TF_DeleteBuffer(meta);
    TF_DeleteBuffer(run);

@@ -1,5 +1,13 @@
 #include <stdio.h>
 #include <tensorflow/c/c_api.h>
+   
+
+void load_example_input(TF_Output* inputs, TF_Output* outputs, 
+   TF_Tensor** input_values, TF_Tensor** output_values)
+{
+   load_vector(len_ini_nodes, data_ini_nodes, name_ini_nodes);
+
+}
 
 int main(int argc, char** argv) 
 {
@@ -36,6 +44,13 @@ int main(int argc, char** argv)
       printf("Error: Tensorflow: %s\n", TF_Message(status));
       return -1;
    }
+
+   TF_Output inputs[24];
+   TF_Output outputs[1];
+   TF_Tensor* input_values[24];
+   TF_Tensor* output_values[1];
+
+   load_example_input(inputs, outputs, input_values, output_values);
 
    // obtain input and output nodes
    TF_Output inputs[1];
