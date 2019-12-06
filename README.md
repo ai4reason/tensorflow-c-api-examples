@@ -10,7 +10,7 @@ Put them in `lib` directory next to `include`.  Update `include` for different v
 
 See their LICENSE for includes.
 
-## Example applications ##
+## Example Applications ##
 
 1) `tfc-version`: Display version (from Tensorflow page).
 2) `tfc-model-list`: List nodes in a model.
