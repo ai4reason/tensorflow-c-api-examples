@@ -49,6 +49,7 @@ int main(int argc, char** argv)
       int n_ins = TF_OperationNumInputs(oper);
       int n_outs = TF_OperationNumOutputs(oper);
       int n_dims = -1;
+      TF_DataType type = TF_OperationOutputType(tensor);
       if (n_ins != 0 && n_outs !=0)
       {
          n_dims = TF_GraphGetTensorNumDims(graph, tensor, status);
@@ -58,7 +59,7 @@ int main(int argc, char** argv)
             return -1;
          }
       }
-      printf("op: name=%s ins=%d outs=%d dims=%d", name, n_ins, n_outs, n_dims);
+      printf("op: name=%s ins=%d outs=%d dims=%d in_type=%d", name, n_ins, n_outs, n_dims, (int)type);
       if (n_dims != -1)
       {
          int64_t dims[1024];

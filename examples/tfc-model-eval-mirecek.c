@@ -1,12 +1,92 @@
 #include <stdio.h>
 #include <tensorflow/c/c_api.h>
    
+static float data_ini_nodes[61] = {0,0,1,0,1,1,2,1,2,1,2,2,1,0,1,2,2,1,0,1,2,2,1,0,0,1,2,2,1,0,1,2,2,1,0,1,2,2,1,1,1,0,0,1,2,2,1,1,1,2,2,1,1,1,0,0,1,2,1,1,1};
+static float data_ini_symbols[18] = {0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1};
+static float data_ini_clauses[15] = {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+static float data_node_inputs_1_lens[61] = {1,1,1,1,1,1,0,1,0,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,1,1,0,1,1,1};
+static float data_node_inputs_1_symbols[42] = {0,1,8,2,9,10,11,12,12,3,13,12,3,14,12,3,4,9,12,3,15,12,3,16,12,11,8,3,5,9,8,8,17,17,10,8,7,6,9,11,8,9};
+static float data_node_inputs_1_nodes[84] = {-1,-1,-1,-1,0,1,-1,-1,3,0,1,-1,6,-1,8,6,10,11,11,-1,13,-1,15,16,16,-1,18,-1,20,21,21,-1,23,-1,24,1,26,27,27,-1,29,-1,31,32,32,-1,34,-1,36,37,36,-1,36,1,37,-1,41,36,42,37,44,45,45,44,0,1,49,50,50,-1,49,50,-1,-1,54,-1,1,55,57,-1,57,1,57,54};
+static float data_node_inputs_1_sgn[42] = {1,1,-1,1,1,-1,-1,1,-1,1,1,-1,1,1,-1,1,1,1,-1,1,1,-1,1,1,-1,-1,-1,1,1,1,-1,-1,1,-1,1,1,1,1,1,-1,-1,1};
+static float data_node_inputs_2_lens[61] = {2,2,0,1,0,0,1,0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1,1,0,1,1,0,1,0,1,1,0,1,0,3,1,0,0,0,1,1,0,1,1,0,0,0,2,1,0,0,0,1,0,0,3,0,0,0};
+static float data_node_inputs_2_symbols[38] = {8,17,10,9,9,11,12,12,3,13,12,3,14,12,3,4,9,12,3,15,12,3,16,12,11,8,3,5,9,8,8,17,8,10,6,11,8,9};
+static float data_node_inputs_2_nodes[76] = {2,1,48,1,5,-1,56,55,4,0,7,-1,9,6,12,11,13,-1,14,-1,17,16,18,-1,19,-1,22,21,23,-1,24,-1,25,1,28,27,29,-1,30,-1,33,32,34,-1,35,-1,38,37,39,-1,40,1,41,-1,42,36,43,37,46,45,47,44,51,50,53,50,52,-1,55,-1,58,-1,59,1,60,54};
+static float data_node_inputs_2_sgn[38] = {-1,1,-1,1,1,-1,1,-1,1,1,-1,1,1,-1,1,1,1,-1,1,1,-1,1,1,-1,-1,-1,1,1,1,-1,-1,-1,1,1,1,-1,-1,1};
+static float data_node_inputs_3_lens[61] = {1,5,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1,2,0,0,0,0,0,0,1,1,0,0,0,0,2,0,0,0,1,1,0,0,0,0,0};
+static float data_node_inputs_3_symbols[21] = {9,8,8,8,9,17,12,12,12,12,12,12,5,12,9,8,8,17,8,9,9};
+static float data_node_inputs_3_nodes[42] = {4,3,2,0,40,36,59,57,25,24,48,0,9,8,12,10,17,15,22,20,28,26,33,31,42,41,38,36,43,42,47,45,46,44,51,49,53,49,60,57,56,1};
+static float data_node_inputs_3_sgn[21] = {1,-1,-1,-1,1,1,1,-1,-1,-1,-1,-1,1,-1,1,-1,-1,-1,1,1,1};
+static float data_symbol_inputs_lens[18] = {1,1,1,6,1,1,1,1,6,5,2,3,7,1,1,1,1,2};
+static float data_symbol_inputs_nodes[126] = {0,-1,-1,1,-1,-1,3,-1,-1,13,11,-1,18,16,-1,23,21,-1,29,27,-1,34,32,-1,41,37,-1,24,23,-1,42,41,36,55,54,-1,54,-1,-1,2,0,1,40,36,1,46,44,45,47,45,44,59,57,1,53,49,50,56,1,55,4,3,0,25,24,1,43,42,37,60,57,54,5,1,-1,52,50,-1,7,6,-1,39,36,-1,58,57,-1,12,10,11,17,15,16,22,20,21,28,26,27,33,31,32,38,36,37,9,8,6,14,13,-1,19,18,-1,30,29,-1,35,34,-1,51,49,50,48,0,1};
+static float data_symbol_inputs_sgn[42] = {1,1,1,1,1,1,1,1,1,1,1,1,1,-1,-1,-1,-1,-1,1,1,1,1,1,1,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,1,1,1,1,-1,1};
+static float data_node_c_inputs_lens[61] = {0,0,1,0,1,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,1,0,0,1,1,1,0,0,1,0,0,1,1,1,0,0,1,1,1,0,0,1,0,1,1,1};
+static float data_node_c_inputs_data[29] = {0,1,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,9,9,10,10,11,12,12,12,13,14,14,14};
+static float data_clause_inputs_lens[15] = {1,1,1,2,2,2,2,2,2,4,2,1,3,1,3};
+static float data_clause_inputs_data[29] = {2,4,5,7,9,12,14,17,19,22,25,28,30,33,35,38,39,40,43,46,47,48,51,52,53,56,58,59,60};
+static float data_prob_segments_lens[1] = {9};
+static float data_prob_segments_data[9] = {1,1,1,7,1,1,1,1,1};
+static float data_labels[8] = {1,1,0,0,1,1,0,0};
 
-void load_example_input(TF_Output* inputs, TF_Output* outputs, 
+void load_vector(int idx, TF_Graph* graph, TF_Output* inputs, TF_Tensor** input_values, int size, float* data, char* name)
+{
+   inputs[idx].oper = TF_GraphOperationByName(graph, name);
+   inputs[idx].index = 0;
+
+   int64_t dims[1];
+   dims[0] = size;
+   input_values[idx] = TF_AllocateTensor(TF_FLOAT, dims, 1, size*sizeof(float));
+   float* input_data = TF_TensorData(input_values[idx]);
+   for (int i=0; i<size; i++) 
+   {  
+      input_data[i] = data[i];
+   }
+}
+
+void load_matrix(int idx, TF_Graph* graph, TF_Output* inputs, TF_Tensor** input_values, int dimx, int dimy, float* data, char* name)
+{
+   inputs[idx].oper = TF_GraphOperationByName(graph, name);
+   inputs[idx].index = 0;
+
+   int64_t dims[2];
+   dims[0] = dimx;
+   dims[1] = dimy;
+   int64_t size = dimx * dimy;
+   input_values[idx] = TF_AllocateTensor(TF_FLOAT, dims, 2, size*sizeof(float));
+   float* input_data = TF_TensorData(input_values[idx]);
+   for (int i=0; i<size; i++) 
+   {  
+      input_data[i] = data[i];
+   }
+}
+
+void load_example_input(TF_Graph* graph, TF_Output* inputs, TF_Output* outputs, 
    TF_Tensor** input_values, TF_Tensor** output_values)
 {
-   load_vector(len_ini_nodes, data_ini_nodes, name_ini_nodes);
-
+   load_vector(0, graph, inputs, input_values, 61, data_ini_nodes, "GraphPlaceholder/ini_nodes");
+   load_vector(1, graph, inputs, input_values, 18, data_ini_symbols, "GraphPlaceholder/ini_symbols");
+   load_vector(2, graph, inputs, input_values, 15, data_ini_clauses, "GraphPlaceholder/ini_clauses");
+   load_vector(3, graph, inputs, input_values, 61, data_node_inputs_1_lens, "GraphPlaceholder/GraphHyperEdgesA/segment_lens");
+   load_vector(4, graph, inputs, input_values, 42, data_node_inputs_1_symbols, "GraphPlaceholder/GraphHyperEdgesA/symbols");
+   load_vector(5, graph, inputs, input_values, 42, data_node_inputs_1_sgn, "GraphPlaceholder/GraphHyperEdgesA/sgn");
+   load_vector(6, graph, inputs, input_values, 61, data_node_inputs_2_lens, "GraphPlaceholder/GraphHyperEdgesA_1/segment_lens");
+   load_vector(7, graph, inputs, input_values, 38, data_node_inputs_2_symbols, "GraphPlaceholder/GraphHyperEdgesA_1/symbols");
+   load_vector(8, graph, inputs, input_values, 38, data_node_inputs_2_sgn, "GraphPlaceholder/GraphHyperEdgesA_1/sgn");
+   load_vector(9, graph, inputs, input_values, 61, data_node_inputs_3_lens, "GraphPlaceholder/GraphHyperEdgesA_2/segment_lens");
+   load_vector(10, graph, inputs, input_values, 21, data_node_inputs_3_symbols, "GraphPlaceholder/GraphHyperEdgesA_2/symbols");
+   load_vector(11, graph, inputs, input_values, 21, data_node_inputs_3_sgn, "GraphPlaceholder/GraphHyperEdgesA_2/sgn");
+   load_vector(12, graph, inputs, input_values, 18, data_symbol_inputs_lens, "GraphPlaceholder/GraphHyperEdgesB/segment_lens");
+   load_vector(13, graph, inputs, input_values, 42, data_symbol_inputs_sgn, "GraphPlaceholder/GraphHyperEdgesB/sgn");
+   load_vector(14, graph, inputs, input_values, 61, data_node_c_inputs_lens, "GraphPlaceholder/GraphEdges/segment_lens");
+   load_vector(15, graph, inputs, input_values, 29, data_node_c_inputs_data, "GraphPlaceholder/GraphEdges/data");
+   load_vector(16, graph, inputs, input_values, 15, data_clause_inputs_lens, "GraphPlaceholder/GraphEdges_1/segment_lens");
+   load_vector(17, graph, inputs, input_values, 29, data_clause_inputs_data, "GraphPlaceholder/GraphEdges_1/data");
+   load_vector(18, graph, inputs, input_values, 1, data_prob_segments_lens, "segment_lens");
+   load_vector(19, graph, inputs, input_values, 9, data_prob_segments_data, "segment_data");
+   load_vector(20, graph, inputs, input_values, 8, data_labels, "Placeholder");
+   load_matrix(21, graph, inputs, input_values, 42, 2, data_node_inputs_1_nodes, "GraphPlaceholder/GraphHyperEdgesA/nodes");
+   load_matrix(22, graph, inputs, input_values, 38, 2, data_node_inputs_2_nodes, "GraphPlaceholder/GraphHyperEdgesA_1/nodes");
+   load_matrix(23, graph, inputs, input_values, 21, 2, data_node_inputs_3_nodes, "GraphPlaceholder/GraphHyperEdgesA_2/nodes");
+   load_matrix(24, graph, inputs, input_values, 42, 3, data_symbol_inputs_nodes, "GraphPlaceholder/GraphHyperEdgesB/nodes");
 }
 
 int main(int argc, char** argv) 
@@ -45,52 +125,19 @@ int main(int argc, char** argv)
       return -1;
    }
 
-   TF_Output inputs[24];
+   // obtain input and output nodes
+   TF_Output inputs[25];
    TF_Output outputs[1];
-   TF_Tensor* input_values[24];
+   TF_Tensor* input_values[25];
    TF_Tensor* output_values[1];
 
-   load_example_input(inputs, outputs, input_values, output_values);
+   load_example_input(graph, inputs, outputs, input_values, output_values);
 
-   // obtain input and output nodes
-   TF_Output inputs[1];
-   inputs[0].oper = TF_GraphOperationByName(graph, "in");
-   inputs[0].index = 0;
-
-   TF_Output outputs[1];
-   outputs[0].oper = TF_GraphOperationByName(graph, "out");
+   outputs[0].oper = TF_GraphOperationByName(graph, "Squeeze");
    outputs[0].index = 0;
 
-   /*
-   // you can get dimensions from model like that:
-   // (adjust dims to n for n>2)
-
-   int n = TF_GraphGetTensorNumDims(graph, inputs[0], status);
-   int64_t dims[2];
-   TF_GraphGetTensorShape(graph, outputs[0], dims, 2, status);
-   printf("%d: %d x %d\n", n, dims[0], dims[1]);
-   */
-
-   // allocate tensorts for input (1x784) and output (1x10)
-   int64_t in_dims[2]  = { 2, 784 };
-   int64_t out_dims[2] = { 2, 10 };
-
-   TF_Tensor* input_values[1];
-   TF_Tensor* output_values[1];
-
-   input_values[0]  = TF_AllocateTensor(TF_FLOAT, in_dims, 2, 2*784*sizeof(float)); 
-   output_values[0] = TF_AllocateTensor(TF_FLOAT, out_dims, 2, 2*10*sizeof(float)); 
-
-   // write test vector to TF_TensorData(input_values[0])
-   float* input_data = TF_TensorData(input_values[0]);
-   for (int i=0; i<784; i++) 
-   {  
-      input_data[i] = 0.5;
-   }
-   for (int i=784; i<2*784; i++) 
-   {  
-      input_data[i] = 0.1;
-   }
+   int64_t out_dims[1] = { 8 };
+   output_values[0] = TF_AllocateTensor(TF_FLOAT, out_dims, 1, 8*sizeof(float)); 
 
    // evaluate test tensor
    TF_SessionRun(
@@ -122,9 +169,9 @@ int main(int argc, char** argv)
 
    // print output/prediction
    float* output_data = TF_TensorData(output_values[0]);
-   for (int i=0; i<20; i++) 
+   for (int i=0; i<8; i++) 
    {  
-      printf("%f%s", output_data[i], ((i+1)%10==0) ? "\n" : ", ");
+      printf("%f%s", output_data[i], ((i+1)%8==0) ? "\n" : ", ");
    }
 
    // terminate

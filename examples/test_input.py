@@ -218,23 +218,28 @@ test_input = {
     np.array([1, 1, 0, 0, 1, 1, 0, 0]),
 }
 
-for x in test_input:
-   test_input[x] = test_input[x].reshape((test_input[x].size,))
-
-for x in test_input:
-   cname = x.replace("/","_")
-   size = test_input[x].size
-   print("int len_%s = %s;" % (cname, test_input[x].size))
-
-for x in test_input:
-   cname = x.replace("/","_")
-   size = test_input[x].size
-   print("float data_%s[%s] = {%s};" % (cname, size, ",".join(map(str,test_input[x]))))
-
 names = open("data_spec_to_tf_names.txt").read().strip().split("\n")
 names = [x.split(" = ") for x in names]
 names = {x:y.rstrip(":0") for (x,y) in names}
-for x in names:
+
+cnt = 0
+for x in test_input:
+   if len(test_input[x].shape) != 1:
+      continue
    cname = x.replace("/","_")
-   print('char* name_%s = "%s";' % (cname, names[x]))
+   print('load_vector(%d, graph, inputs, input_values, %d, data_%s, "%s");' % (cnt, test_input[x].shape[0], cname, names[x]))
+   cnt += 1
+
+for x in test_input:
+   if len(test_input[x].shape) != 2:
+      continue
+   cname = x.replace("/","_")
+   print('load_matrix(%d, graph, inputs, input_values, %d, %d, data_%s, "%s");' % (cnt, test_input[x].shape[0], test_input[x].shape[1], cname, names[x]))
+   cnt += 1
+
+for x in test_input:
+   cname = x.replace("/","_")
+   size = test_input[x].size
+   test_input[x] = test_input[x].reshape((size,))
+   print("static float data_%s[%s] = {%s};" % (cname, size, ",".join(map(str,test_input[x]))))
 
