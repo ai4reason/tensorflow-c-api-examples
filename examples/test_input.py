@@ -241,5 +241,5 @@ for x in test_input:
    cname = x.replace("/","_")
    size = test_input[x].size
    test_input[x] = test_input[x].reshape((size,))
-   print("static float data_%s[%s] = {%s};" % (cname, size, ",".join(map(str,test_input[x]))))
+   print("static int32_t data_%s[%s] = {%s};" % (cname, size, ",".join(map(str,test_input[x]))))
 

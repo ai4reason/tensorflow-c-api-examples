@@ -58,7 +58,7 @@ int main(int argc, char** argv)
             printf("Error: Tensorflow: %s\n", TF_Message(status));
             return -1;
          }
-      }
+      } 
       printf("op: name=%s ins=%d outs=%d dims=%d in_type=%d", name, n_ins, n_outs, n_dims, (int)type);
       if (n_dims != -1)
       {
